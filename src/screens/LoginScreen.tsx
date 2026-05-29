@@ -3,8 +3,8 @@ import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { Typography } from '../components/Typography';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
-import { colors } from '../theme/colors';
 import { useAuthStore } from '../store/authStore';
+import { useThemeColors } from '../store/themeStore'; 
 
 export const LoginScreen = () => {
   const [username, setUsername] = useState('');
@@ -12,12 +12,12 @@ export const LoginScreen = () => {
   const [errors, setErrors] = useState({ username: '', password: '' });
   
   const login = useAuthStore((state) => state.login);
+  const colors = useThemeColors(); 
 
   const handleLogin = () => {
     let isValid = true;
     let newErrors = { username: '', password: '' };
 
-    // Базова валідація на порожні поля
     if (!username.trim()) {
       newErrors.username = 'Обов\'язкове поле';
       isValid = false;
@@ -37,7 +37,7 @@ export const LoginScreen = () => {
 
   return (
     <KeyboardAvoidingView 
-      style={styles.container} 
+      style={[styles.container, { backgroundColor: colors.background }]} 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={styles.formContainer}>
@@ -48,7 +48,6 @@ export const LoginScreen = () => {
           value={username} 
           onChangeText={(text) => {
             setUsername(text);
-            // Прибираємо помилку, якщо юзер почав вводити текст
             if (errors.username) setErrors(prev => ({ ...prev, username: '' }));
           }} 
           autoCapitalize="none"
@@ -78,7 +77,6 @@ export const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     justifyContent: 'center',
   },
   formContainer: {

@@ -5,10 +5,11 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TabNavigator } from './src/navigation/TabNavigator';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { useAuthStore } from './src/store/authStore';
-import { colors } from './src/theme/colors';
+import { useThemeColors } from './src/store/themeStore'; 
 
 export default function App() {
   const { token, isLoading, checkToken } = useAuthStore();
+  const colors = useThemeColors(); 
 
   useEffect(() => {
     checkToken();

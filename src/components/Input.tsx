@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextInput, TextInputProps, StyleSheet, View, Text } from 'react-native';
-import { colors } from '../theme/colors';
+import { useThemeColors } from '../store/themeStore';
 
 interface InputProps extends TextInputProps {
   error?: string;
@@ -8,57 +8,30 @@ interface InputProps extends TextInputProps {
 
 export const Input: React.FC<InputProps> = ({ style, error, ...props }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const colors = useThemeColors();
 
   return (
     <View style={styles.container}>
       <TextInput 
         style={[
           styles.input, 
-          isFocused && styles.inputFocused,
-          error && styles.inputError,
+          { backgroundColor: colors.surface, borderColor: colors.border, color: colors.text },
+          isFocused && { borderColor: colors.primary },
+          error ? { borderColor: colors.error } : null,
           style
         ]} 
         placeholderTextColor={colors.textSecondary}
-        onFocus={(e) => {
-          setIsFocused(true);
-          props.onFocus?.(e);
-        }}
-        onBlur={(e) => {
-          setIsFocused(false);
-          props.onBlur?.(e);
-        }}
+        onFocus={(e) => { setIsFocused(true); props.onFocus?.(e); }}
+        onBlur={(e) => { setIsFocused(false); props.onBlur?.(e); }}
         {...props} 
       />
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
+      {error ? <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text> : null}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    marginVertical: 8, 
-    width: '100%' 
-  },
-  input: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 8,
-    padding: 16,
-    fontSize: 16,
-    color: colors.text,
-    width: '100%',
-  },
-  inputFocused: {
-    borderColor: colors.primary, 
-  },
-  inputError: {
-    borderColor: colors.error, 
-  },
-  errorText: {
-    color: colors.error,
-    fontSize: 12,
-    marginTop: 4,
-    marginLeft: 4,
-  }
+  container: { marginVertical: 8, width: '100%' },
+  input: { borderWidth: 1, borderRadius: 8, padding: 16, fontSize: 16, width: '100%' },
+  errorText: { fontSize: 12, marginTop: 4, marginLeft: 4 }
 });
