@@ -7,6 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { TabNavigator } from './src/navigation/TabNavigator';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { CustomToast } from './src/components/CustomToast';
+import { ErrorBoundary } from './src/components/ErrorBoundary';
 import { useAuthStore } from './src/store/authStore';
 import { useThemeColors, ThemeColors } from './src/store/themeStore';
 
@@ -35,10 +36,12 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <SafeAreaProvider>
-          <NavigationContainer>
-            {token ? <TabNavigator /> : <LoginScreen />}
-          </NavigationContainer>
-          <CustomToast />
+          <ErrorBoundary>
+            <NavigationContainer>
+              {token ? <TabNavigator /> : <LoginScreen />}
+            </NavigationContainer>
+            <CustomToast />
+          </ErrorBoundary>
         </SafeAreaProvider>
       </QueryClientProvider>
     </GestureHandlerRootView>
