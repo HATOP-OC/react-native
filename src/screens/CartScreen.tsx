@@ -9,7 +9,9 @@ import { useCartStore, CartItem } from '../store/cartStore';
 export const CartScreen = () => {
   const colors = useThemeColors();
   const styles = getStyles(colors);
-  const { items, removeFromCart, updateQuantity, getTotalPrice } = useCartStore();
+  const { items, removeFromCart, updateQuantity } = useCartStore();
+
+  const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const renderItem = ({ item }: { item: CartItem }) => (
     <View style={styles.cartItem}>
@@ -18,8 +20,12 @@ export const CartScreen = () => {
       </View>
       
       <View style={styles.itemDetails}>
-        <Typography variant="body" numberOfLines={2} style={styles.title}>{item.title}</Typography>
-        <Typography variant="h2" style={styles.price}>${(item.price * item.quantity).toFixed(2)}</Typography>
+        <Typography variant="body" numberOfLines={2} style={styles.title}>
+          {item.title}
+        </Typography>
+        <Typography variant="h2" style={styles.price}>
+          ${(item.price * item.quantity).toFixed(2)}
+        </Typography>
         
         <View style={styles.controlsRow}>
           <View style={styles.quantityControls}>
@@ -44,7 +50,7 @@ export const CartScreen = () => {
     return (
       <View style={styles.center}>
         <Ionicons name="cart-outline" size={80} color={colors.textSecondary} />
-        <Typography variant="h2" style={{ marginTop: 20 }}>Кошик порожній</Typography>
+        <Typography variant="h2" style={styles.emptyText}>Кошик порожній</Typography>
       </View>
     );
   }
@@ -61,8 +67,8 @@ export const CartScreen = () => {
       <View style={styles.footer}>
         <View style={styles.totalRow}>
           <Typography variant="h2">Сума:</Typography>
-          <Typography variant="h1" style={{ color: colors.primary }}>
-            ${getTotalPrice().toFixed(2)}
+          <Typography variant="h1" style={styles.totalPriceText}>
+            ${totalPrice.toFixed(2)}
           </Typography>
         </View>
         <Button title="Оформити замовлення" onPress={() => console.log('Перехід до Checkout')} />
@@ -74,6 +80,7 @@ export const CartScreen = () => {
 const getStyles = (colors: any) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background },
+  emptyText: { marginTop: 20 },
   list: { padding: 16 },
   cartItem: {
     flexDirection: 'row',
@@ -95,4 +102,5 @@ const getStyles = (colors: any) => StyleSheet.create({
   quantityText: { marginHorizontal: 12, fontSize: 16, fontWeight: 'bold' },
   footer: { padding: 20, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
+  totalPriceText: { color: colors.primary },
 });
