@@ -1,9 +1,9 @@
+import { CartItem } from '@/store/cartStore';
+import { ThemeColors, useThemeColors } from '@/store/themeStore';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import { CartItem } from '../store/cartStore';
-import { ThemeColors, useThemeColors } from '../store/themeStore';
 import { Typography } from './Typography';
 
 interface Props {

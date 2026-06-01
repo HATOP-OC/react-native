@@ -1,8 +1,7 @@
-import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import Toast, { ToastConfig } from 'react-native-toast-message';
+import { useThemeColors } from '@/store/themeStore';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeColors } from '../store/themeStore';
+import { StyleSheet, Text, View } from 'react-native';
+import Toast, { ToastConfig } from 'react-native-toast-message';
 
 export const CustomToast = () => {
   const colors = useThemeColors();

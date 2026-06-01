@@ -1,6 +1,6 @@
+import { useThemeColors } from '@/store/themeStore';
 import React from 'react';
 import { Text, TextProps } from 'react-native';
-import { useThemeColors } from '../store/themeStore';
 
 interface TypographyProps extends TextProps {
   variant?: 'h1' | 'h2' | 'body' | 'caption';

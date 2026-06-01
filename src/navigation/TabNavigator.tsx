@@ -1,12 +1,11 @@
-import React from 'react';
-import { TouchableOpacity } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { CartScreen } from '@/screens/CartScreen';
+import { ProfileScreen } from '@/screens/ProfileScreen';
+import { useCartStore } from '@/store/cartStore';
+import { useThemeColors, useThemeStore } from '@/store/themeStore';
 import { Ionicons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { TouchableOpacity } from 'react-native';
 import { HomeStack } from './HomeStack';
-import { CartScreen } from '../screens/CartScreen';
-import { ProfileScreen } from '../screens/ProfileScreen';
-import { useThemeColors, useThemeStore } from '../store/themeStore';
-import { useCartStore } from '../store/cartStore';
 
 const Tab = createBottomTabNavigator();
 

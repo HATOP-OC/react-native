@@ -1,9 +1,9 @@
+import { Typography } from '@/components/Typography';
+import { useAuthStore } from '@/store/authStore';
+import { useProfileStore } from '@/store/profileStore';
+import { ThemeColors, useThemeColors } from '@/store/themeStore';
 import { Ionicons } from '@expo/vector-icons';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Typography } from '../components/Typography';
-import { useAuthStore } from '../store/authStore';
-import { useProfileStore } from '../store/profileStore';
-import { ThemeColors, useThemeColors } from '../store/themeStore';
 
 
 

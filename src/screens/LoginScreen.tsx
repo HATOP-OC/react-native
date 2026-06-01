@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import * as LocalAuthentication from 'expo-local-authentication';
+import { Button } from '@/components/Button';
+import { Input } from '@/components/Input';
+import { Typography } from '@/components/Typography';
+import { useAuthStore } from '@/store/authStore';
+import { useThemeColors } from '@/store/themeStore';
 import { Ionicons } from '@expo/vector-icons';
-import Toast from 'react-native-toast-message'; 
-import { Typography } from '../components/Typography';
-import { Button } from '../components/Button';
-import { Input } from '../components/Input';
-import { useAuthStore } from '../store/authStore';
-import { useThemeColors } from '../store/themeStore';
+import * as LocalAuthentication from 'expo-local-authentication';
+import { useEffect, useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 export const LoginScreen = () => {
   const [email, setEmail] = useState('');

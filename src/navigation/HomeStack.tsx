@@ -1,8 +1,7 @@
-import React from 'react';
+import { HomeScreen } from '@/screens/HomeScreen';
+import { ProductDetailsScreen } from '@/screens/ProductDetailsScreen';
+import { Product } from '@/services/api';
 import { createStackNavigator } from '@react-navigation/stack';
-import { HomeScreen } from '../screens/HomeScreen';
-import { ProductDetailsScreen } from '../screens/ProductDetailsScreen';
-import { Product } from '../services/api';
 
 export type HomeStackParamList = {
   HomeMain: undefined;

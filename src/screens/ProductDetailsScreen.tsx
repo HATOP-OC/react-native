@@ -1,12 +1,12 @@
-import React, { useRef } from 'react';
-import { View, ScrollView, Image, StyleSheet, TouchableOpacity, Animated } from 'react-native';
-import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
+import { Typography } from '@/components/Typography';
+import { HomeStackParamList } from '@/navigation/HomeStack';
+import { useCartStore } from '@/store/cartStore';
+import { ThemeColors, useThemeColors } from '@/store/themeStore';
 import { Ionicons } from '@expo/vector-icons';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { useRef } from 'react';
+import { Animated, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message';
-import { HomeStackParamList } from '../navigation/HomeStack';
-import { Typography } from '../components/Typography';
-import { useThemeColors, ThemeColors } from '../store/themeStore';
-import { useCartStore } from '../store/cartStore';
 
 type DetailsRouteProp = RouteProp<HomeStackParamList, 'ProductDetails'>;
 

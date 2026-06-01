@@ -1,9 +1,9 @@
+import { HomeStackParamList } from '@/navigation/HomeStack';
+import { Product } from '@/services/api';
+import { ThemeColors, useThemeColors } from '@/store/themeStore';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { HomeStackParamList } from '../navigation/HomeStack';
-import { Product } from '../services/api';
-import { ThemeColors, useThemeColors } from '../store/themeStore';
 import { Typography } from './Typography';
 
 interface ProductCardProps {

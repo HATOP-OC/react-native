@@ -1,12 +1,12 @@
+import { CategoryFilter } from '@/components/CategoryFilter';
+import { ProductCard } from '@/components/ProductCard';
+import { Typography } from '@/components/Typography';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useProducts } from '@/hooks/useProducts';
+import { ThemeColors, useThemeColors } from '@/store/themeStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, TextInput, View } from 'react-native';
-import { CategoryFilter } from '../components/CategoryFilter';
-import { ProductCard } from '../components/ProductCard';
-import { Typography } from '../components/Typography';
-import { useDebounce } from '../hooks/useDebounce';
-import { useProducts } from '../hooks/useProducts';
-import { ThemeColors, useThemeColors } from '../store/themeStore';
 
 
 

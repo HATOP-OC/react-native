@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { getCategories, getProducts } from '@/services/api';
 import { useQuery } from '@tanstack/react-query';
-import { getProducts, getCategories } from '../services/api';
+import { useState } from 'react';
 
 export const useProducts = () => {
   const [activeCategory, setActiveCategory] = useState<string>('all');

@@ -1,6 +1,6 @@
+import { useThemeColors } from '@/store/themeStore';
 import React from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import { useThemeColors } from '../store/themeStore';
 import { Typography } from './Typography';
 
 interface CategoryFilterProps {

@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { Modal, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { UserProfile } from '@/store/profileStore';
+import { ThemeColors, useThemeColors } from '@/store/themeStore';
 import { Ionicons } from '@expo/vector-icons';
-import { useForm, Controller } from 'react-hook-form';
 import * as Location from 'expo-location';
-import Toast from 'react-native-toast-message'; 
-import { Typography } from './Typography';
+import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { ActivityIndicator, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 import { Button } from './Button';
-import { useThemeColors, ThemeColors } from '../store/themeStore';
-import { UserProfile } from '../store/profileStore';
+import { Typography } from './Typography';
 
 interface Props {
   visible: boolean;

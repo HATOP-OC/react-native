@@ -1,5 +1,5 @@
+import { darkColors, lightColors } from '@/theme/colors';
 import { create } from 'zustand';
-import { lightColors, darkColors } from '../theme/colors';
 
 interface ThemeState {
   isDark: boolean;

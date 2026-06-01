@@ -1,6 +1,6 @@
+import { useThemeColors } from '@/store/themeStore';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TextInputProps, View } from 'react-native';
-import { useThemeColors } from '../store/themeStore';
 
 interface InputProps extends TextInputProps {
   error?: string;

@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { Button } from '@/components/Button';
+import { CartItemCard } from '@/components/CartItemCard';
+import { CheckoutModal } from '@/components/CheckoutModal';
+import { Typography } from '@/components/Typography';
+import { useCartStore } from '@/store/cartStore';
+import { useProfileStore, UserProfile } from '@/store/profileStore';
+import { ThemeColors, useThemeColors } from '@/store/themeStore';
 import { Ionicons } from '@expo/vector-icons';
-import Toast from 'react-native-toast-message'; // <--- Імпортуємо Toast
-import { Typography } from '../components/Typography';
-import { Button } from '../components/Button';
-import { useThemeColors, ThemeColors } from '../store/themeStore';
-import { useCartStore } from '../store/cartStore';
-import { useProfileStore, UserProfile } from '../store/profileStore';
-import { CartItemCard } from '../components/CartItemCard';
-import { CheckoutModal } from '../components/CheckoutModal';
+import { useState } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
+import Toast from 'react-native-toast-message'; 
 
 export const CartScreen = () => {
   const colors = useThemeColors();
