@@ -2,18 +2,34 @@ import React, { useEffect } from 'react';
 import { ActivityIndicator, View, StyleSheet, LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { TabNavigator } from './src/navigation/TabNavigator';
-import { LoginScreen } from './src/screens/LoginScreen';
-import { CustomToast } from './src/components/CustomToast';
-import { ErrorBoundary } from './src/components/ErrorBoundary';
-import { useAuthStore } from './src/store/authStore';
-import { useThemeColors, ThemeColors } from './src/store/themeStore';
+
+import { QueryClient } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { TabNavigator } from '@/navigation/TabNavigator';
+import { LoginScreen } from '@/screens/LoginScreen';
+import { CustomToast } from '@/components/CustomToast';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { useAuthStore } from '@/store/authStore';
+import { useThemeColors, ThemeColors } from '@/store/themeStore';
 
 LogBox.ignoreLogs(['InteractionManager has been deprecated']);
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, 
+      gcTime: 1000 * 60 * 60 * 24, 
+    },
+  },
+});
+
+const asyncStoragePersister = createAsyncStoragePersister({
+  storage: AsyncStorage,
+});
 
 export default function App() {
   const { token, isLoading, checkToken } = useAuthStore();
@@ -34,7 +50,10 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryClientProvider client={queryClient}>
+      <PersistQueryClientProvider 
+        client={queryClient} 
+        persistOptions={{ persister: asyncStoragePersister }}
+      >
         <SafeAreaProvider>
           <ErrorBoundary>
             <NavigationContainer>
@@ -43,7 +62,7 @@ export default function App() {
             <CustomToast />
           </ErrorBoundary>
         </SafeAreaProvider>
-      </QueryClientProvider>
+      </PersistQueryClientProvider>
     </GestureHandlerRootView>
   );
 }
