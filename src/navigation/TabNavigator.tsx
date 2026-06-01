@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { HomeScreen } from '../screens/HomeScreen';
+import { HomeStack } from './HomeStack';
 import { CartScreen } from '../screens/CartScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { useThemeColors, useThemeStore } from '../store/themeStore';
@@ -11,7 +11,7 @@ const Tab = createBottomTabNavigator();
 
 export const TabNavigator = () => {
   const colors = useThemeColors();
-  const { isDark, toggleTheme } = useThemeStore(); 
+  const { isDark, toggleTheme } = useThemeStore();
 
   return (
     <Tab.Navigator
@@ -41,7 +41,7 @@ export const TabNavigator = () => {
         ),
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Товари' }} />
+      <Tab.Screen name="Home" component={HomeStack} options={{ title: 'Товари' }} />
       <Tab.Screen name="Cart" component={CartScreen} options={{ title: 'Кошик' }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Профіль' }} />
     </Tab.Navigator>

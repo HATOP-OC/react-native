@@ -1,18 +1,25 @@
 import React from 'react';
 import { View, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { Typography } from './Typography';
 import { useThemeColors } from '../store/themeStore';
 import { Product } from '../services/api';
+import { HomeStackParamList } from '../navigation/HomeStack';
 
 interface ProductCardProps {
   product: Product;
 }
 
 const { width } = Dimensions.get('window');
-const CARD_WIDTH = (width - 48) / 2; 
+const CARD_WIDTH = (width - 48) / 2;
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const colors = useThemeColors();
+  const navigation = useNavigation<NavigationProp<HomeStackParamList>>();
+
+  const handlePress = () => {
+    navigation.navigate('ProductDetails', { product });
+  };
 
   return (
     <TouchableOpacity 
@@ -21,6 +28,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         { backgroundColor: colors.surface, borderColor: colors.border }
       ]}
       activeOpacity={0.7}
+      onPress={handlePress}
     >
       <View style={styles.imageContainer}>
         <Image 
@@ -52,8 +60,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16,
     overflow: 'hidden',
-    elevation: 2, 
-    shadowColor: '#000', 
+    elevation: 2,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -72,7 +80,7 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   title: {
-    height: 40, 
+    height: 40,
     fontSize: 14,
     fontWeight: '500',
   },
