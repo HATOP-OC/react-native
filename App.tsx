@@ -13,6 +13,8 @@ LogBox.ignoreLogs(['InteractionManager has been deprecated']);
 
 const queryClient = new QueryClient();
 
+type ThemeColors = ReturnType<typeof useThemeColors>;
+
 export default function App() {
   const { token, isLoading, checkToken } = useAuthStore();
   const colors = useThemeColors();
@@ -43,6 +45,11 @@ export default function App() {
   );
 }
 
-const getStyles = (colors: any) => StyleSheet.create({
-  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background },
+const getStyles = (colors: ThemeColors) => StyleSheet.create({
+  loaderContainer: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: colors.background 
+  },
 });

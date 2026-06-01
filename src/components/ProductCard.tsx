@@ -13,6 +13,8 @@ interface ProductCardProps {
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2;
 
+type ThemeColors = ReturnType<typeof useThemeColors>;
+
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const colors = useThemeColors();
   const styles = getStyles(colors);
@@ -37,7 +39,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   );
 };
 
-const getStyles = (colors: any) => StyleSheet.create({
+const getStyles = (colors: ThemeColors) => StyleSheet.create({
   card: {
     width: CARD_WIDTH,
     backgroundColor: colors.surface,
