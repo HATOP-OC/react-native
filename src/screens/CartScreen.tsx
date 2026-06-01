@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, FlatList, StyleSheet, Image, TouchableOpacity, Modal, TextInput, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, FlatList, StyleSheet, Image, TouchableOpacity, Modal, TextInput, Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useForm, Controller } from 'react-hook-form';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import * as Location from 'expo-location';
 import { Typography } from '../components/Typography';
 import { Button } from '../components/Button';
 import { useThemeColors } from '../store/themeStore';
@@ -18,58 +20,103 @@ export const CartScreen = () => {
   const { profile, updateProfile, addOrder } = useProfileStore();
   
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
 
-  const { control, handleSubmit, formState: { errors }, reset } = useForm<UserProfile>({
+  const { control, handleSubmit, formState: { errors }, reset, setValue } = useForm<UserProfile>({
     defaultValues: profile || { name: '', phone: '', address: '' },
   });
 
   const totalPrice = items.reduce((total, item) => total + item.price * item.quantity, 0);
 
+  const handleGetLocation = async () => {
+    setIsLocating(true);
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Помилка', 'Немає доступу до геолокації.');
+        setIsLocating(false);
+        return;
+      }
+      
+      let location = await Location.getLastKnownPositionAsync();
+
+      if (!location) {
+        location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Lowest,
+        });
+      }
+
+      if (!location) throw new Error('Location not found');
+
+      let geocode = await Location.reverseGeocodeAsync(location.coords);
+      
+      if (geocode && geocode.length > 0) {
+        const city = geocode[0].city || geocode[0].region || geocode[0].subregion || '';
+        const street = geocode[0].street || geocode[0].name || '';
+        const addr = `${city}, ${street}`.replace(/^, |, $/g, '').trim();
+        
+        setValue('address', addr || `${location.coords.latitude.toFixed(4)}, ${location.coords.longitude.toFixed(4)}`);
+      } else {
+        setValue('address', `${location.coords.latitude.toFixed(4)}, ${location.coords.longitude.toFixed(4)}`);
+      }
+    } catch (error) {
+      console.warn('GPS Fetch Error:', error);
+      setValue('address', 'Львів, Відділення НП №1');
+      Alert.alert(
+        'Увага', 
+        'Системні сервіси локації на цьому емуляторі не відповідають. Підставлено тестову адресу.'
+      );
+    } finally {
+      setIsLocating(false);
+    }
+  };
+
   const onSubmit = (data: UserProfile) => {
     updateProfile(data);
-    
-    const newOrder = {
-      id: Math.random().toString(36).substr(2, 9),
-      date: new Date().toISOString(),
-      items: [...items],
-      total: totalPrice,
+    const newOrder = { 
+      id: Math.random().toString(36).substr(2, 9), 
+      date: new Date().toISOString(), 
+      items: [...items], 
+      total: totalPrice 
     };
-    
     addOrder(newOrder);
     clearCart();
     setModalVisible(false);
     reset(data);
-    
-    Alert.alert(
-      "Успіх!",
-      "Замовлення оформлено. Товари додано в профіль.",
-      [{ text: "ОК" }]
-    );
+    Alert.alert("Успіх!", "Замовлення оформлено. Товари додано в профіль.", [{ text: "ОК" }]);
   };
 
+  const renderRightActions = (id: number) => (
+    <TouchableOpacity style={styles.deleteAction} onPress={() => removeFromCart(id)}>
+      <Ionicons name="trash" size={24} color="#FFF" />
+      <Typography variant="caption" style={{ color: '#FFF', marginTop: 4 }}>Видалити</Typography>
+    </TouchableOpacity>
+  );
+
   const renderItem = ({ item }: { item: CartItem }) => (
-    <View style={styles.cartItem}>
-      <View style={styles.imageContainer}>
-        <Image source={{ uri: item.image }} style={styles.image} resizeMode="contain" />
-      </View>
-      <View style={styles.itemDetails}>
-        <Typography variant="body" numberOfLines={2} style={styles.title}>{item.title}</Typography>
-        <Typography variant="h2" style={styles.price}>${(item.price * item.quantity).toFixed(2)}</Typography>
-        <View style={styles.controlsRow}>
-          <View style={styles.quantityControls}>
-            <TouchableOpacity onPress={() => updateQuantity(item.id, -1)} style={styles.circleBtn}>
-              <Ionicons name="remove" size={16} color={colors.text} />
-            </TouchableOpacity>
-            <Typography variant="body" style={styles.quantityText}>{item.quantity}</Typography>
-            <TouchableOpacity onPress={() => updateQuantity(item.id, 1)} style={styles.circleBtn}>
-              <Ionicons name="add" size={16} color={colors.text} />
-            </TouchableOpacity>
+    <View style={styles.swipeableWrapper}>
+      <Swipeable renderRightActions={() => renderRightActions(item.id)}>
+        <View style={styles.cartItem}>
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: item.image }} style={styles.image} resizeMode="contain" />
           </View>
-          <TouchableOpacity onPress={() => removeFromCart(item.id)}>
-            <Ionicons name="trash-outline" size={24} color="#FF3B30" />
-          </TouchableOpacity>
+          <View style={styles.itemDetails}>
+            <Typography variant="body" numberOfLines={2} style={styles.title}>{item.title}</Typography>
+            <Typography variant="h2" style={styles.price}>${(item.price * item.quantity).toFixed(2)}</Typography>
+            <View style={styles.controlsRow}>
+              <View style={styles.quantityControls}>
+                <TouchableOpacity onPress={() => updateQuantity(item.id, -1)} style={styles.circleBtn}>
+                  <Ionicons name="remove" size={16} color={colors.text} />
+                </TouchableOpacity>
+                <Typography variant="body" style={styles.quantityText}>{item.quantity}</Typography>
+                <TouchableOpacity onPress={() => updateQuantity(item.id, 1)} style={styles.circleBtn}>
+                  <Ionicons name="add" size={16} color={colors.text} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
         </View>
-      </View>
+      </Swipeable>
     </View>
   );
 
@@ -84,11 +131,11 @@ export const CartScreen = () => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={items}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        contentContainerStyle={styles.list}
+      <FlatList 
+        data={items} 
+        keyExtractor={(item) => item.id.toString()} 
+        renderItem={renderItem} 
+        contentContainerStyle={styles.list} 
       />
       <View style={styles.footer}>
         <View style={styles.totalRow}>
@@ -99,10 +146,7 @@ export const CartScreen = () => {
       </View>
 
       <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-        <KeyboardAvoidingView 
-          style={styles.modalOverlay} 
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        >
+        <KeyboardAvoidingView style={styles.modalOverlay} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Typography variant="h2">Оформлення замовлення</Typography>
@@ -112,69 +156,29 @@ export const CartScreen = () => {
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-              <Controller
-                control={control}
-                rules={{ 
-                  required: 'Ім\'я обов\'язкове',
-                  minLength: { value: 2, message: 'Мінімум 2 символи' }
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <>
-                    <TextInput
-                      style={[styles.input, { color: colors.text, borderColor: errors.name ? '#FF3B30' : colors.border }]}
-                      placeholder="Ваше ім'я"
-                      placeholderTextColor={colors.textSecondary}
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                    />
-                    {errors.name && <Typography variant="caption" style={styles.errorText}>{errors.name.message}</Typography>}
-                  </>
-                )}
-                name="name"
-              />
+              <Controller control={control} rules={{ required: 'Ім\'я обов\'язкове', minLength: { value: 2, message: 'Мінімум 2 символи' } }} render={({ field: { onChange, onBlur, value } }) => (
+                <>
+                  <TextInput style={[styles.input, { borderColor: errors.name ? '#FF3B30' : colors.border, color: colors.text }]} placeholder="Ваше ім'я" placeholderTextColor={colors.textSecondary} onBlur={onBlur} onChangeText={onChange} value={value} />
+                  {errors.name && <Typography variant="caption" style={styles.errorText}>{errors.name.message}</Typography>}
+                </>
+              )} name="name" />
 
-              <Controller
-                control={control}
-                rules={{ 
-                  required: 'Телефон обов\'язковий',
-                  pattern: { value: /^[0-9]{10,14}$/, message: 'Введіть коректний номер (тільки цифри)' }
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <>
-                    <TextInput
-                      style={[styles.input, { color: colors.text, borderColor: errors.phone ? '#FF3B30' : colors.border }]}
-                      placeholder="Телефон (напр. 380991234567)"
-                      placeholderTextColor={colors.textSecondary}
-                      keyboardType="numeric"
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                    />
-                    {errors.phone && <Typography variant="caption" style={styles.errorText}>{errors.phone.message}</Typography>}
-                  </>
-                )}
-                name="phone"
-              />
+              <Controller control={control} rules={{ required: 'Телефон обов\'язковий', pattern: { value: /^[0-9]{10,14}$/, message: 'Тільки цифри' } }} render={({ field: { onChange, onBlur, value } }) => (
+                <>
+                  <TextInput style={[styles.input, { borderColor: errors.phone ? '#FF3B30' : colors.border, color: colors.text }]} placeholder="Телефон" keyboardType="numeric" placeholderTextColor={colors.textSecondary} onBlur={onBlur} onChangeText={onChange} value={value} />
+                  {errors.phone && <Typography variant="caption" style={styles.errorText}>{errors.phone.message}</Typography>}
+                </>
+              )} name="phone" />
 
-              <Controller
-                control={control}
-                rules={{ required: 'Адреса обов\'язкова' }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <>
-                    <TextInput
-                      style={[styles.input, { color: colors.text, borderColor: errors.address ? '#FF3B30' : colors.border }]}
-                      placeholder="Місто, Відділення НП"
-                      placeholderTextColor={colors.textSecondary}
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                    />
-                    {errors.address && <Typography variant="caption" style={styles.errorText}>{errors.address.message}</Typography>}
-                  </>
-                )}
-                name="address"
-              />
+              <View style={styles.geoRow}>
+                <Controller control={control} rules={{ required: 'Адреса обов\'язкова' }} render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput style={[styles.input, { flex: 1, borderColor: errors.address ? '#FF3B30' : colors.border, color: colors.text }]} placeholder="Адреса доставки" placeholderTextColor={colors.textSecondary} onBlur={onBlur} onChangeText={onChange} value={value} />
+                )} name="address" />
+                <TouchableOpacity onPress={handleGetLocation} style={[styles.geoButton, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                  {isLocating ? <ActivityIndicator size="small" color={colors.primary} /> : <Ionicons name="location" size={24} color={colors.primary} />}
+                </TouchableOpacity>
+              </View>
+              {errors.address && <Typography variant="caption" style={styles.errorText}>{errors.address.message}</Typography>}
 
               <Button title="Підтвердити" onPress={handleSubmit(onSubmit)} style={{ marginTop: 25 }} />
             </ScrollView>
@@ -190,7 +194,8 @@ const getStyles = (colors: ThemeColors) => StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background },
   emptyText: { marginTop: 20 },
   list: { padding: 16 },
-  cartItem: { flexDirection: 'row', backgroundColor: colors.surface, borderRadius: 12, padding: 12, marginBottom: 16, borderWidth: 1, borderColor: colors.border },
+  swipeableWrapper: { marginBottom: 16 },
+  cartItem: { flexDirection: 'row', backgroundColor: colors.surface, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: colors.border },
   imageContainer: { width: 80, height: 80, backgroundColor: '#FFF', borderRadius: 8, padding: 5 },
   image: { width: '100%', height: '100%' },
   itemDetails: { flex: 1, marginLeft: 12, justifyContent: 'space-between' },
@@ -200,6 +205,7 @@ const getStyles = (colors: ThemeColors) => StyleSheet.create({
   quantityControls: { flexDirection: 'row', alignItems: 'center' },
   circleBtn: { width: 28, height: 28, borderRadius: 14, borderWidth: 1, borderColor: colors.border, justifyContent: 'center', alignItems: 'center' },
   quantityText: { marginHorizontal: 12, fontSize: 16, fontWeight: 'bold' },
+  deleteAction: { backgroundColor: '#FF3B30', justifyContent: 'center', alignItems: 'center', width: 80, height: '100%', borderRadius: 12, marginLeft: 10 },
   footer: { padding: 20, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   totalPriceText: { color: colors.primary },
@@ -208,4 +214,6 @@ const getStyles = (colors: ThemeColors) => StyleSheet.create({
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   input: { borderWidth: 1, borderRadius: 10, padding: 14, fontSize: 16, marginTop: 15, backgroundColor: colors.background },
   errorText: { color: '#FF3B30', marginTop: 5, marginLeft: 5, fontSize: 12 },
+  geoRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  geoButton: { marginTop: 15, height: 50, width: 50, borderRadius: 10, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
 });
