@@ -6,12 +6,17 @@ import { HomeStack } from './HomeStack';
 import { CartScreen } from '../screens/CartScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { useThemeColors, useThemeStore } from '../store/themeStore';
+import { useCartStore } from '../store/cartStore';
 
 const Tab = createBottomTabNavigator();
 
 export const TabNavigator = () => {
   const colors = useThemeColors();
   const { isDark, toggleTheme } = useThemeStore();
+  
+  const cartItemsCount = useCartStore((state) => 
+    state.items.reduce((total, item) => total + item.quantity, 0)
+  );
 
   return (
     <Tab.Navigator
@@ -42,7 +47,15 @@ export const TabNavigator = () => {
       })}
     >
       <Tab.Screen name="Home" component={HomeStack} options={{ title: 'Товари' }} />
-      <Tab.Screen name="Cart" component={CartScreen} options={{ title: 'Кошик' }} />
+      <Tab.Screen 
+        name="Cart" 
+        component={CartScreen} 
+        options={{ 
+          title: 'Кошик',
+          tabBarBadge: cartItemsCount > 0 ? cartItemsCount : undefined, // Ось ця червона циферка
+          tabBarBadgeStyle: { backgroundColor: '#FF3B30', color: '#FFF' }
+        }} 
+      />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Профіль' }} />
     </Tab.Navigator>
   );

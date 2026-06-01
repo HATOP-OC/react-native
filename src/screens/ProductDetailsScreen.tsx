@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { HomeStackParamList } from '../navigation/HomeStack';
 import { Typography } from '../components/Typography';
 import { useThemeColors } from '../store/themeStore';
+import { useCartStore } from '../store/cartStore';
 
 type DetailsRouteProp = RouteProp<HomeStackParamList, 'ProductDetails'>;
 
@@ -13,6 +14,8 @@ export const ProductDetailsScreen = () => {
   const navigation = useNavigation();
   const colors = useThemeColors();
   const { product } = route.params;
+  
+  const addToCart = useCartStore((state) => state.addToCart);
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -28,6 +31,10 @@ export const ProductDetailsScreen = () => {
       toValue: 1,
       useNativeDriver: true,
     }).start();
+  };
+
+  const handleAddToCart = () => {
+    addToCart(product);
   };
 
   const renderStars = (rate: number) => {
@@ -88,7 +95,7 @@ export const ProductDetailsScreen = () => {
             activeOpacity={1}
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
-            onPress={() => console.log('Додано в кошик!')}
+            onPress={handleAddToCart}
             style={[styles.cartButton, { backgroundColor: colors.primary }]}
           >
             <Ionicons name="cart-outline" size={24} color="#FFF" />

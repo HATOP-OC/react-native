@@ -1,69 +1,34 @@
-import { useState, useEffect } from 'react';
-import { getProducts, getCategories, Product } from '../services/api';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getProducts, getCategories } from '../services/api';
 
 export const useProducts = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
-  
-  const [loadingInitial, setLoadingInitial] = useState<boolean>(true);
-  const [loadingProducts, setLoadingProducts] = useState<boolean>(false);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const loadInitialData = async () => {
-    setLoadingInitial(true);
-    setError(null);
-    try {
-      const [prods, cats] = await Promise.all([getProducts('all'), getCategories()]);
-      setProducts(prods);
-      setCategories(['all', ...cats]);
-    } catch (err) {
-      setError('Не вдалося завантажити дані. Спробуйте пізніше.');
-    } finally {
-      setLoadingInitial(false);
-    }
-  };
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+  });
 
-  useEffect(() => {
-    loadInitialData();
-  }, []);
-
-  const handleCategoryPress = async (category: string) => {
-    if (category === activeCategory) return;
-    
-    setActiveCategory(category);
-    setLoadingProducts(true);
-    try {
-      const data = await getProducts(category);
-      setProducts(data);
-    } catch (err) {
-      setError('Не вдалося завантажити товари для цієї категорії.');
-    } finally {
-      setLoadingProducts(false);
-    }
-  };
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    try {
-      const data = await getProducts(activeCategory);
-      setProducts(data);
-    } catch (err) {
-    } finally {
-      setRefreshing(false);
-    }
-  };
+  const { 
+    data: products = [], 
+    isLoading, 
+    error, 
+    refetch, 
+    isRefetching 
+  } = useQuery({
+    queryKey: ['products', activeCategory],
+    queryFn: () => getProducts(activeCategory),
+  });
 
   return {
     products,
-    categories,
+    categories: ['all', ...categories],
     activeCategory,
-    loadingInitial,
-    loadingProducts,
-    refreshing,
-    error,
-    handleCategoryPress,
-    handleRefresh,
+    loadingProducts: isLoading,
+    refreshing: isRefetching,
+    error: error ? 'Не вдалося завантажити дані' : null,
+    handleCategoryPress: setActiveCategory,
+    handleRefresh: refetch,
   };
 };
