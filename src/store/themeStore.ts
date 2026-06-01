@@ -15,3 +15,5 @@ export const useThemeColors = () => {
   const isDark = useThemeStore((state) => state.isDark);
   return isDark ? darkColors : lightColors;
 };
+
+export type ThemeColors = ReturnType<typeof useThemeColors>;

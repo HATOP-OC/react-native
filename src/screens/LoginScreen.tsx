@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { Ionicons } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message'; 
 import { Typography } from '../components/Typography';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
@@ -24,20 +25,25 @@ export const LoginScreen = () => {
 
   const handleLogin = () => {
     if (!email.trim() || !password.trim()) {
-      Alert.alert('Помилка', 'Введіть логін та пароль');
+      Toast.show({
+        type: 'error',
+        text1: 'Помилка',
+        text2: 'Введіть логін та пароль',
+        position: 'top',
+      });
       return;
     }
     login('fake-jwt-token-12345');
   };
 
   const handleBiometricAuth = async () => {
-    // Перевіряємо, чи налаштував юзер біометрію в системі
     const enrolled = await LocalAuthentication.isEnrolledAsync();
     if (!enrolled) {
-      Alert.alert(
-        'Увага', 
-        'Біометрія не налаштована. Додайте відбиток або обличчя в налаштуваннях пристрою.'
-      );
+      Toast.show({
+        type: 'info',
+        text1: 'Увага',
+        text2: 'Біометрія не налаштована. Додайте відбиток у налаштуваннях.',
+      });
       return;
     }
 
@@ -97,11 +103,7 @@ export const LoginScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    padding: 20 
-  },
+  container: { flex: 1, justifyContent: 'center', padding: 20 },
   bioButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -113,11 +115,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     width: '100%',
   },
-  bioIcon: {
-    marginRight: 10,
-  },
-  bioText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+  bioIcon: { marginRight: 10 },
+  bioText: { fontSize: 16, fontWeight: 'bold' },
 });

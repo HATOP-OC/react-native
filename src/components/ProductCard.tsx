@@ -1,10 +1,10 @@
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { View, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { Typography } from './Typography';
-import { useThemeColors } from '../store/themeStore';
-import { Product } from '../services/api';
+import { Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { HomeStackParamList } from '../navigation/HomeStack';
+import { Product } from '../services/api';
+import { ThemeColors, useThemeColors } from '../store/themeStore';
+import { Typography } from './Typography';
 
 interface ProductCardProps {
   product: Product;
@@ -13,7 +13,7 @@ interface ProductCardProps {
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2;
 
-type ThemeColors = ReturnType<typeof useThemeColors>;
+
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const colors = useThemeColors();

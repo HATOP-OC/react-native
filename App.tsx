@@ -6,14 +6,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { TabNavigator } from './src/navigation/TabNavigator';
 import { LoginScreen } from './src/screens/LoginScreen';
+import { CustomToast } from './src/components/CustomToast';
 import { useAuthStore } from './src/store/authStore';
-import { useThemeColors } from './src/store/themeStore';
+import { useThemeColors, ThemeColors } from './src/store/themeStore';
 
 LogBox.ignoreLogs(['InteractionManager has been deprecated']);
 
 const queryClient = new QueryClient();
-
-type ThemeColors = ReturnType<typeof useThemeColors>;
 
 export default function App() {
   const { token, isLoading, checkToken } = useAuthStore();
@@ -24,9 +23,9 @@ export default function App() {
   }, []);
 
   if (isLoading) {
-    const styles = getStyles(colors);
+    const loaderStyles = getLoaderStyles(colors);
     return (
-      <View style={styles.loaderContainer}>
+      <View style={loaderStyles.loaderContainer}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
@@ -39,13 +38,14 @@ export default function App() {
           <NavigationContainer>
             {token ? <TabNavigator /> : <LoginScreen />}
           </NavigationContainer>
+          <CustomToast />
         </SafeAreaProvider>
       </QueryClientProvider>
     </GestureHandlerRootView>
   );
 }
 
-const getStyles = (colors: ThemeColors) => StyleSheet.create({
+const getLoaderStyles = (colors: ThemeColors) => StyleSheet.create({
   loaderContainer: { 
     flex: 1, 
     justifyContent: 'center', 

@@ -1,10 +1,10 @@
-import React from 'react';
-import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import { Typography } from './Typography';
-import { useThemeColors } from '../store/themeStore';
 import { CartItem } from '../store/cartStore';
+import { ThemeColors, useThemeColors } from '../store/themeStore';
+import { Typography } from './Typography';
 
 interface Props {
   item: CartItem;
@@ -12,7 +12,7 @@ interface Props {
   onUpdateQuantity: (id: number, amount: number) => void;
 }
 
-type ThemeColors = ReturnType<typeof useThemeColors>;
+
 
 export const CartItemCard: React.FC<Props> = ({ item, onRemove, onUpdateQuantity }) => {
   const colors = useThemeColors();

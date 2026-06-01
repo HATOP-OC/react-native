@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { View, FlatList, ActivityIndicator, StyleSheet, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeColors } from '../store/themeStore';
+import { useState } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, TextInput, View } from 'react-native';
+import { CategoryFilter } from '../components/CategoryFilter';
 import { ProductCard } from '../components/ProductCard';
 import { Typography } from '../components/Typography';
-import { CategoryFilter } from '../components/CategoryFilter';
-import { useProducts } from '../hooks/useProducts';
 import { useDebounce } from '../hooks/useDebounce';
+import { useProducts } from '../hooks/useProducts';
+import { ThemeColors, useThemeColors } from '../store/themeStore';
 
-type ThemeColors = ReturnType<typeof useThemeColors>;
+
 
 export const HomeScreen = () => {
   const colors = useThemeColors();

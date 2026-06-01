@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Modal, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { Modal, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useForm, Controller } from 'react-hook-form';
 import * as Location from 'expo-location';
+import Toast from 'react-native-toast-message'; 
 import { Typography } from './Typography';
 import { Button } from './Button';
-import { useThemeColors } from '../store/themeStore';
+import { useThemeColors, ThemeColors } from '../store/themeStore';
 import { UserProfile } from '../store/profileStore';
 
 interface Props {
@@ -14,8 +15,6 @@ interface Props {
   onSubmit: (data: UserProfile) => void;
   defaultValues: UserProfile;
 }
-
-type ThemeColors = ReturnType<typeof useThemeColors>;
 
 export const CheckoutModal: React.FC<Props> = ({ visible, onClose, onSubmit, defaultValues }) => {
   const colors = useThemeColors();
@@ -35,7 +34,11 @@ export const CheckoutModal: React.FC<Props> = ({ visible, onClose, onSubmit, def
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Помилка', 'Немає доступу до геолокації.');
+        Toast.show({
+          type: 'error',
+          text1: 'Помилка доступу',
+          text2: 'Надайте дозвіл на геолокацію в налаштуваннях',
+        });
         return;
       }
       
@@ -53,7 +56,11 @@ export const CheckoutModal: React.FC<Props> = ({ visible, onClose, onSubmit, def
       }
     } catch (error) {
       console.warn('GPS Fetch Error:', error);
-      Alert.alert('Помилка GPS', 'Не вдалося визначити локацію. Будь ласка, введіть адресу вручну.');
+      Toast.show({
+        type: 'error',
+        text1: 'Помилка GPS',
+        text2: 'Не вдалося визначити локацію. Введіть адресу вручну.',
+      });
     } finally {
       setIsLocating(false);
     }

@@ -1,7 +1,7 @@
 import React from 'react';
-import { ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { Typography } from './Typography';
+import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useThemeColors } from '../store/themeStore';
+import { Typography } from './Typography';
 
 interface CategoryFilterProps {
   categories: string[];

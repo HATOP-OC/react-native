@@ -1,12 +1,11 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Typography } from '../components/Typography';
-import { useThemeColors } from '../store/themeStore';
 import { useAuthStore } from '../store/authStore';
 import { useProfileStore } from '../store/profileStore';
+import { ThemeColors, useThemeColors } from '../store/themeStore';
 
-type ThemeColors = ReturnType<typeof useThemeColors>;
+
 
 export const ProfileScreen = () => {
   const colors = useThemeColors();

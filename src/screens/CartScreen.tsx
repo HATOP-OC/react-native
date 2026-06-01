@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { View, FlatList, StyleSheet, Alert } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message'; // <--- Імпортуємо Toast
 import { Typography } from '../components/Typography';
 import { Button } from '../components/Button';
-import { useThemeColors } from '../store/themeStore';
+import { useThemeColors, ThemeColors } from '../store/themeStore';
 import { useCartStore } from '../store/cartStore';
 import { useProfileStore, UserProfile } from '../store/profileStore';
 import { CartItemCard } from '../components/CartItemCard';
 import { CheckoutModal } from '../components/CheckoutModal';
-
-type ThemeColors = ReturnType<typeof useThemeColors>;
 
 export const CartScreen = () => {
   const colors = useThemeColors();
@@ -33,7 +32,14 @@ export const CartScreen = () => {
     addOrder(newOrder);
     clearCart();
     setModalVisible(false);
-    Alert.alert("Успіх!", "Замовлення оформлено. Товари додано в твій профіль.", [{ text: "ОК" }]);
+    
+    Toast.show({
+      type: 'success',
+      text1: 'Успіх!',
+      text2: 'Замовлення оформлено. Товари додано в твій профіль.',
+      position: 'top',
+      visibilityTime: 4000,
+    });
   };
 
   if (items.length === 0) {
