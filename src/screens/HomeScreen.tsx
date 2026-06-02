@@ -99,7 +99,7 @@ export const HomeScreen = () => {
         <FlatList
           data={filteredProducts}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <ProductCard product={item} />}
+          renderItem={({ item, index }) => <ProductCard product={item} index={index} />}
           numColumns={2}
           columnWrapperStyle={styles.row}
           contentContainerStyle={styles.listContainer}

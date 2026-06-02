@@ -6,13 +6,16 @@ import { useThemeColors } from '@/store/themeStore';
 import { Ionicons } from '@expo/vector-icons';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import Toast from 'react-native-toast-message';
+import Animated, { ZoomIn, FadeIn, FadeOut } from 'react-native-reanimated';
 
 export const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);
+  const [loginStatus, setLoginStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+  
   const login = useAuthStore((state) => state.login);
   const colors = useThemeColors();
 
@@ -23,7 +26,7 @@ export const LoginScreen = () => {
     })();
   }, []);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
       Toast.show({
         type: 'error',
@@ -33,6 +36,12 @@ export const LoginScreen = () => {
       });
       return;
     }
+
+    setLoginStatus('loading');
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setLoginStatus('success');
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     login('fake-jwt-token-12345');
   };
 
@@ -76,7 +85,29 @@ export const LoginScreen = () => {
         secureTextEntry 
       />
       
-      <Button title="Увійти" onPress={handleLogin} style={{ marginTop: 10 }} />
+      <View style={styles.buttonContainer}>
+        {loginStatus === 'idle' && (
+          <Animated.View entering={FadeIn} exiting={FadeOut}>
+            <Button title="Увійти" onPress={handleLogin} />
+          </Animated.View>
+        )}
+
+        {loginStatus === 'loading' && (
+          <Animated.View entering={FadeIn} exiting={FadeOut} style={styles.stateWrapper}>
+            <ActivityIndicator size="large" color={colors.primary} />
+          </Animated.View>
+        )}
+
+        {loginStatus === 'success' && (
+          <Animated.View 
+            entering={ZoomIn.springify().damping(12)} 
+            exiting={FadeOut} 
+            style={styles.stateWrapper}
+          >
+            <Ionicons name="checkmark-circle" size={56} color="#34C759" />
+          </Animated.View>
+        )}
+      </View>
 
       {isBiometricSupported && (
         <TouchableOpacity
@@ -104,6 +135,8 @@ export const LoginScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', padding: 20 },
+  buttonContainer: { marginTop: 10, height: 60, justifyContent: 'center' },
+  stateWrapper: { alignItems: 'center', justifyContent: 'center' },
   bioButton: {
     flexDirection: 'row',
     alignItems: 'center',
