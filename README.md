@@ -19,19 +19,19 @@
 ## How to Run
 
 1. **Install Dependencies:**
-   \`\`\`bash
+   ```bash
    npm install
-   \`\`\`
+   ```
 
 2. **Environment Setup:**
    Create a `.env` file in the root directory:
-   \`\`\`env
+   ```env
    EXPO_PUBLIC_API_URL=https://fakestoreapi.com
    EXPO_ROUTER_DISABLE_RN_NAVIGATION_CHECK=1
-   \`\`\`
+   ```
 
 3. **Start the App:**
-   \`\`\`bash
+   ```bash
    npx expo start
-   \`\`\`
+   ```
    Press `a` to run on Android emulator or `i` for iOS simulator.
